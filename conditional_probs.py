@@ -31,12 +31,19 @@ def encode_as_ab(row, symm):
     
     '''
     
-    if int(row.decision_seq[0]) & symm: # symmetrical mapping based on first choice in sequence 1 --> A
-        mapping = {('0','0'): 'b', ('0','1'): 'B', ('1','0'): 'a', ('1','1'): 'A'} 
-    elif (int(row.decision_seq[0])==0) & symm: # symmetrical mapping for first choice 0 --> A    
-        mapping = {('0','0'): 'a', ('0','1'): 'A', ('1','0'): 'b', ('1','1'): 'B'} 
+#     if int(row.decision_seq[0]) & symm: # symmetrical mapping based on first choice in sequence 1 --> A
+#         mapping = {('0','0'): 'b', ('0','1'): 'B', ('1','0'): 'a', ('1','1'): 'A'} 
+#     elif (int(row.decision_seq[0])==0) & symm: # symmetrical mapping for first choice 0 --> A    
+#         mapping = {('0','0'): 'a', ('0','1'): 'A', ('1','0'): 'b', ('1','1'): 'B'} 
+#     else: # raw right/left mapping (not symmetrical)
+#         mapping = {('0','0'): 'r', ('0','1'): 'R', ('1','0'): 'l', ('1','1'): 'L'} 
+
+    if int(row.decision_seq[0]) & symm: # symmetrical mapping based on first choice in sequence 1 --> X
+        mapping = {('0','0'): 'y', ('0','1'): 'Y', ('1','0'): 'x', ('1','1'): 'X'} 
+    elif (int(row.decision_seq[0])==0) & symm: # symmetrical mapping for first choice 0 --> X    
+        mapping = {('0','0'): 'x', ('0','1'): 'X', ('1','0'): 'y', ('1','1'): 'Y'} 
     else: # raw right/left mapping (not symmetrical)
-        mapping = {('0','0'): 'r', ('0','1'): 'R', ('1','0'): 'l', ('1','1'): 'L'} 
+        mapping = {('0','0'): 'b', ('0','1'): 'B', ('1','0'): 'a', ('1','1'): 'A'} # CY change to represent rules A and B (actual rules)
 
     return ''.join([mapping[(c,r)] for c,r in zip(row.decision_seq, row.reward_seq)])
 
@@ -66,8 +73,10 @@ def add_history_cols(df, N):
     for session in df.Session.unique(): # go by session to keep boundaries clean
 
         d = df.loc[df.Session == session] # temporary subset of dataset for session
+#         df.loc[d.index.values[N:], 'decision_seq'] = \
+#                                     list(map(list_to_str, sliding_window_view(d.Decision.astype('int'), N)))[:-1]
         df.loc[d.index.values[N:], 'decision_seq'] = \
-                                    list(map(list_to_str, sliding_window_view(d.Decision.astype('int'), N)))[:-1]
+                                    list(map(list_to_str, sliding_window_view(d.decisionRule.astype('int'), N)))[:-1] # CY change to decisionRule to make it directly comparable
 
         df.loc[d.index.values[N:], 'reward_seq'] = \
                                     list(map(list_to_str, sliding_window_view(d.Reward.astype('int'), N)))[:-1]

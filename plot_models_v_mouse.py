@@ -19,7 +19,8 @@ def get_block_position_summaries(data):
 
     for group_col in ['block_pos_rev', 'blockTrial']:
 
-        block_start, block_end = [0,20] if group_col=='blockTrial' else [-20,-1]
+#         block_start, block_end = [0,20] if group_col=='blockTrial' else [-20,-1]
+        block_start, block_end = [0,75] if group_col=='blockTrial' else [-30,-1]
 
         summary_stats = data.groupby(group_col).agg(
             phigh = pd.NamedAgg(column = 'highPort', aggfunc = 'mean'),
@@ -70,8 +71,10 @@ def plot_by_block_position(bpos, subset='condition', **kwargs):
                                     y2=d.pswitch + d.pswitch_std / np.sqrt(d.n), alpha=0.2, color=trace_color)
         
         ax2.set_yticks(np.arange(0,0.6,step=0.1))#[0,0.1, 0.4])
-    ax1.set(xlim=(-10,20), ylim=(0,1), xlabel='Block Position', ylabel='P(high port)')
-    ax2.set(xlim=(-10,20), ylim=(0,np.max(bpos.pswitch)+0.05), xlabel='Block Position', ylabel='P(switch)') 
+#     ax1.set(xlim=(-10,20), ylim=(0,1), xlabel='Block Position', ylabel='P(high port)')
+#     ax2.set(xlim=(-10,20), ylim=(0,np.max(bpos.pswitch)+0.05), xlabel='Block Position', ylabel='P(switch)') 
+    ax1.set(xlim=(-30,75), ylim=(0,1), xlabel='Block Position', ylabel='P(correct)')
+    ax2.set(xlim=(-30,75), ylim=(0,np.max(bpos.pswitch)+0.05), xlabel='Block Position', ylabel='P(switch)') 
     
     if len(bpos[subset].unique())<5:
         ax1.legend(loc=[0.5,-0.03], fontsize=16,frameon=False)

@@ -37,7 +37,7 @@ def fit_with_sgd(ll_func, training_data, num_steps=10000, step_size=1e-1, init_p
     opt_state = init_fun(init_parameters)
 
     loss_fn = lambda parameters: -ll_func(parameters, training_data)
-    loss_fn_and_grad = jit(value_and_grad(loss_fn))
+    loss_fn_and_grad = jit(value_and_grad(loss_fn),backend='cpu') # CY: for some reason cpu is faster than gpu
 
     def step(itr, opt_state):
         value, grads = loss_fn_and_grad(get_params(opt_state))

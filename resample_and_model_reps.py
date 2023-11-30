@@ -32,9 +32,12 @@ def pull_sample_dataset(session_id_list, data):
     '''
     
     # choices and rewards (second idx, {0,1}) by session (first idx {0:nSessions}) for models
-    sample_features = [[data[data.Session==session].Decision.values.astype('int'), \
+#     sample_features = [[data[data.Session==session].Decision.values.astype('int'), \
+#                         data[data.Session==session].Reward.values.astype('int')] for session in session_id_list]
+#     sample_target = [data[data.Session==session].Target.values.astype('int') for session in session_id_list] # for expected reward only
+    sample_features = [[data[data.Session==session].decisionRule.values.astype('int'), \
                         data[data.Session==session].Reward.values.astype('int')] for session in session_id_list]
-    sample_target = [data[data.Session==session].Target.values.astype('int') for session in session_id_list] # for expected reward only
+    sample_target = [data[data.Session==session].targetRule.values.astype('int') for session in session_id_list] # for expected reward only
 
     # makde test_df ordered same as test_sessions
     sample_block_pos_core = pd.concat([data[data.Session == session] for session in session_id_list] ).reset_index(drop=True)
@@ -63,8 +66,10 @@ def reconstruct_block_pos(blocks, model_choice, model_switch):
     block_pos_model['model'] = 'model' # label all rows to fill as model predictions
 
     block_pos_model['Switch']=list(itertools.chain(*model_switch)) # fill with model switch predictions
-    block_pos_model['Decision'] = list(itertools.chain(*model_choice)) # fill with model choice predictions
-    block_pos_model['highPort']= list(itertools.chain(*model_choice)) == block_pos_model.Target # fill with model higher prob port
+#     block_pos_model['Decision'] = list(itertools.chain(*model_choice)) # fill with model choice predictions
+#     block_pos_model['highPort']= list(itertools.chain(*model_choice)) == block_pos_model.Target # fill with model higher prob port
+    block_pos_model['decisionRule'] = list(itertools.chain(*model_choice)) # fill with model choice predictions
+    block_pos_model['highPort']= list(itertools.chain(*model_choice)) == block_pos_model.targetRule # fill with model higher prob port
     
     return block_pos_model # return model version of data
 
